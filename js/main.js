@@ -86,15 +86,23 @@ class UnCaptcha extends Component {
         this.challenge = new GreyChallenge();
     }
 
-    renderBox() {
-        return div(
-            div()
+    renderCheckbox() {
+        if (this.completed) {
+            return image("assets/checkmark.png").class("checkbox");
+        } else {
+            return div()
                 .class("checkbox")
                 .onClick(() => {
                     this.newChallenge();
                     this.showChallenge = true;
                     htmless.rerender(this);
-                }),
+                });
+        }
+    }
+
+    renderBox() {
+        return div(
+            this.renderCheckbox(),
             "I'm a robot",
             div(image("assets/logo.png"), "unCAPTCHA").class("logo-box")
         ).class("captcha-box");
@@ -122,8 +130,11 @@ class UnCaptcha extends Component {
                         if (!this.challenge.check()) {
                             console.log("wow u suck");
                             this.newChallenge();
-                            htmless.rerender(this);
+                        } else {
+                            this.completed = true;
+                            this.showChallenge = false;
                         }
+                        htmless.rerender(this);
                     }).bind(this)
                 )
             ).class("challenge-footer")
